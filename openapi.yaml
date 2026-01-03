@@ -1,0 +1,61 @@
+openapi: 3.1.0
+info:
+  title: Perky Crew Gear Advisor
+  description: >
+    An API that recommends gear upgrades for characters in the Perky Crew server
+    by scraping the CharBrowser and comparing equipped items against a local
+    SQLite item database.
+  version: 1.0.0
+servers:
+  - url: https://perkycrew-gear-tool.onrender.com
+    description: Render deployment (replace with your actual deployed URL)
+paths:
+  /recommend-upgrades:
+    post:
+      operationId: recommendUpgrades
+      summary: Recommend gear upgrades for a Perky Crew character
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                characterName:
+                  type: string
+                  description: The name of the character on Perky Crew
+              required:
+                - characterName
+      responses:
+        '200':
+          description: A list of recommended item upgrades
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  upgrades:
+                    type: array
+                    description: A list of recommended gear upgrades
+                    items:
+                      type: object
+                      properties:
+                        itemName:
+                          type: string
+                        slot:
+                          type: string
+                        reason:
+                          type: string
+                        link:
+                          type: string
+                  errors:
+                    type: array
+                    description: Any issues or warnings
+                    items:
+                      type: string
+        '400':
+          description: Bad request (e.g., missing characterName)
+        '404':
+          description: Character not found
+        '422':
+          description: Class not recognized
